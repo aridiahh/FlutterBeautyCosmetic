@@ -1,7 +1,10 @@
 import 'package:PaySoon/CoverPage.dart';
 import 'package:PaySoon/EditUser.dart';
 import 'package:PaySoon/ListUser.dart';
+import 'package:PaySoon/TabunganPage.dart';
+import 'package:PaySoon/AddBunga.dart';
 import 'package:PaySoon/helper/helper.dart';
+import 'package:PaySoon/listBunga.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -106,6 +109,20 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               actions: <Widget>[
+                TextButton(
+                  child: Text("Lihat Tabungan Anggota"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TabunganPage(
+                            id: _response.data["data"]["anggota"]["id"]
+                                .toString(),
+                          ),
+                        ));
+                  },
+                ),
                 TextButton(
                   child: Text("OK"),
                   onPressed: () {
@@ -230,80 +247,106 @@ class _HomePageState extends State<HomePage> {
                       size: 30,
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        color: Color(0xFF2C2C2C),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                          ),
-                        ]),
-                    child: InkWell(
+                  Row(children: [
+                    GestureDetector(
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Konfirmasi Logout'),
-                              content: Text('Anda yakin ingin keluar?'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    goLogout().then(
-                                      (value) {
-                                        if (value) {
-                                          _storage.erase();
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  CoverPage(),
-                                            ),
-                                          );
-                                        } else {
-                                          Navigator.of(context).pop();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content:
-                                                      Text("Gagal Logout")));
-                                        }
-                                      },
-                                    );
-                                  },
-                                  child: Text('Ya'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            HomePage(),
-                                      ),
-                                    );
-                                  },
-                                  child: Text('Batal'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListBunga(),
+                            ));
                       },
                       child: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.logout,
-                          size: 28,
-                          color: Colors.white, // Warna ikon
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.money_off_outlined,
+                            size: 28,
+                            color: Colors.white, // Warna ikon
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Color(0xFF2C2C2C),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                            ),
+                          ]),
+                      child: InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Konfirmasi Logout'),
+                                content: Text('Anda yakin ingin keluar?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      goLogout().then(
+                                        (value) {
+                                          if (value) {
+                                            _storage.erase();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        CoverPage(),
+                                              ),
+                                            );
+                                          } else {
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content:
+                                                        Text("Gagal Logout")));
+                                          }
+                                        },
+                                      );
+                                    },
+                                    child: Text('Ya'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              HomePage(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text('Batal'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.logout,
+                            size: 28,
+                            color: Colors.white, // Warna ikon
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
                 ],
               ),
             ),
@@ -432,6 +475,8 @@ class _HomePageState extends State<HomePage> {
                                   AssetImage('asset/images/profile.png'),
                             ),
                             onTap: () {
+                              // Navigator.pushNamed(context, '/anggota/detail',
+                              //     arguments: anggota.id);
                               detailUserAnggota(anggota.id);
                             },
                           );
